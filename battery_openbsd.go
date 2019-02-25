@@ -33,7 +33,7 @@ import (
 
 var errValueNotFound = fmt.Errorf("Value not found")
 
-var sensorW = [4]int32{
+var sensorW = [4]int{
 	2,  // SENSOR_VOLTS_DC (uV)
 	5,  // SENSOR_WATTS (uW)
 	7,  // SENSOR_WATTHOUR (uWh)
@@ -46,13 +46,13 @@ const (
 )
 
 type sensordev struct {
-	num           int32
+	num           int
 	xname         [16]byte
-	maxnumt       [21]int32
-	sensors_count int32
+	maxnumt       [21]int
+	sensors_count int
 }
 
-type sensorStatus int32
+type sensorStatus int
 
 const (
 	unspecified sensorStatus = iota
@@ -68,8 +68,8 @@ type sensor struct {
 	value  int64
 	typ    [4]byte // enum sensor_type
 	status sensorStatus
-	numt   int32
-	flags  int32
+	numt   int
+	flags  int
 }
 
 type interValue struct {
@@ -78,7 +78,7 @@ type interValue struct {
 	e *error
 }
 
-func sysctl(mib []int32, out unsafe.Pointer, n uintptr) syscall.Errno {
+func sysctl(mib []int, out unsafe.Pointer, n uintptr) syscall.Errno {
 	_, _, e := unix.Syscall6(
 		unix.SYS___SYSCTL,
 		uintptr(unsafe.Pointer(&mib[0])),
@@ -99,10 +99,9 @@ func readValue(s sensor, div float64) (float64, error) {
 	return float64(s.value) / div, nil
 }
 
-func readValues(mib []int32, c int32, values map[string]*interValue) {
+func readValues(mib []int, c int, values map[string]*interValue) {
 	var s sensor
-	var i int32
-	for i = 0; i < c; i++ {
+	for i := 0; i < c; i++ {
 		mib[4] = i
 
 		if err := sysctl(mib, unsafe.Pointer(&s), unsafe.Sizeof(s)); err != 0 {
@@ -147,11 +146,10 @@ func readValues(mib []int32, c int32, values map[string]*interValue) {
 }
 
 func sensordevIter(cb func(sd sensordev, i int, err error) bool) {
-	mib := []int32{6, 11, 0}
+	mib := []int{6, 11, 0}
 	var sd sensordev
 	var idx int
-	var i int32
-	for i = 0; ; i++ {
+	for i := 0; ; i++ {
 		mib[2] = i
 
 		e := sysctl(mib, unsafe.Pointer(&sd), unsafe.Sizeof(sd))
@@ -189,7 +187,7 @@ func getBattery(sd sensordev) (*Battery, error) {
 		DesignVoltage: errValueNotFound,
 	}
 
-	mib := []int32{6, 11, sd.num, 0, 0}
+	mib := []int{6, 11, sd.num, 0, 0}
 	for _, w := range sensorW {
 		mib[3] = w
 
