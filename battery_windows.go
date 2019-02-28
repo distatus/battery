@@ -131,7 +131,7 @@ var setupDiDestroyDeviceInfoList = setupapi.NewProc("SetupDiDestroyDeviceInfoLis
 
 func readState(powerState uint32) State {
 	switch powerState {
-	case 0x00000004:
+	case 0x00000004, 0x00000005:
 		return Charging
 	case 0x00000008:
 		return Empty
