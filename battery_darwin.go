@@ -24,6 +24,8 @@ package battery
 import (
 	"math"
 	"os/exec"
+	"strings"
+	"unicode"
 
 	plist "howett.net/plist"
 )
@@ -50,8 +52,17 @@ func readBatteries() ([]*battery, error) {
 		return nil, nil
 	}
 
+	// Battery XML data can contain illegal unicode characters
+	printOnly := func(r rune) rune {
+		if unicode.IsPrint(r) {
+			return r
+		}
+		return -1
+	}
+	batteryXML := []byte(strings.Map(printOnly, string(out)))
+
 	var data []*battery
-	if _, err = plist.Unmarshal(out, &data); err != nil {
+	if _, err = plist.Unmarshal(batteryXML, &data); err != nil {
 		return nil, err
 	}
 	return data, nil
