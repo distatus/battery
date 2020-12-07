@@ -35,6 +35,7 @@ func TestNewState(t *testing.T) {
 	}{
 		{"Charging", Charging, nil},
 		{"charging", Charging, nil},
+		{"Not Charging", NotCharging, nil},
 		{"strange", Unknown, fmt.Errorf("Invalid state `strange`")},
 	}
 
