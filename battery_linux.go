@@ -22,10 +22,12 @@
 package battery
 
 import (
+	"errors"
 	"io/ioutil"
 	"os"
 	"path/filepath"
 	"strconv"
+	"syscall"
 )
 
 const sysfs = "/sys/class/power_supply"
@@ -96,7 +98,17 @@ func getByPath(path string) (*Battery, error) {
 		if e.Voltage == nil {
 			b.Current, e.Current = readAmp(path, "charge_now", b.Voltage)
 			b.Full, e.Full = readAmp(path, "charge_full", b.Voltage)
-			b.ChargeRate, e.ChargeRate = readAmp(path, "current_now", b.Voltage)
+			var err error
+			b.ChargeRate, err = readAmp(path, "current_now", b.Voltage)
+
+			// sysfs file "current_now" is not readable on some laptops due to ACPI bug.
+			// See: https://bugzilla.kernel.org/show_bug.cgi?id=83411
+			// Including HP Elitebook 840 G4
+			if errors.Is(err, syscall.ENODEV) {
+				b.ChargeRate = 0
+			} else {
+				e.ChargeRate = err
+			}
 		} else {
 			e.Current = e.Voltage
 			e.Full = e.Voltage
