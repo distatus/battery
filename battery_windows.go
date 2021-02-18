@@ -194,7 +194,7 @@ func systemGet(idx int) (*Battery, error) {
 	// The god damn struct with ANYSIZE_ARRAY of utf16 in it is crazy.
 	// So... let's emulate it with array of uint16 ;-D.
 	// Keep in mind that the first two elements are actually cbSize.
-	didd := make([]uint16, cbRequired/2-1)
+	didd := make([]uint16, cbRequired/2)
 	cbSize := (*uint32)(unsafe.Pointer(&didd[0]))
 	if unsafe.Sizeof(uint(0)) == 8 {
 		*cbSize = 8
