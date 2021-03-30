@@ -30,8 +30,8 @@ import (
 
 type battery struct {
 	Voltage           int
-	CurrentCapacity   int
-	MaxCapacity       int
+	CurrentCapacity   int `plist:"AppleRawCurrentCapacity"`
+	MaxCapacity       int `plist:"AppleRawMaxCapacity"`
 	DesignCapacity    int
 	Amperage          int64
 	FullyCharged      bool
