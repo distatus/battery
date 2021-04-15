@@ -26,7 +26,7 @@ import (
 	"os"
 	"time"
 
-	"github.com/distatus/battery"
+	"github.com/gmelchett/battery"
 )
 
 func printBattery(idx int, bat *battery.Battery) {
