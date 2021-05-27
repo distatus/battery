@@ -51,6 +51,7 @@ const (
 	Full
 	Charging
 	Discharging
+	NotCharging
 )
 
 var states = [...]string{
@@ -59,6 +60,7 @@ var states = [...]string{
 	Full:        "Full",
 	Charging:    "Charging",
 	Discharging: "Discharging",
+	NotCharging: "Not Charging",
 }
 
 func (s State) String() string {
