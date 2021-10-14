@@ -22,6 +22,7 @@
 package main
 
 import (
+	"flag"
 	"fmt"
 	"os"
 	"time"
@@ -30,6 +31,25 @@ import (
 )
 
 func printBattery(idx int, bat *battery.Battery) {
+	simple := flag.Bool("s", false, "Simple format")
+	flag.Parse()
+	if *simple {
+		var icon int
+		switch bat.State {
+		case battery.Full:
+			icon = 0x1F50B
+		case battery.Empty:
+			icon = 0x1FAAB
+		case battery.Charging:
+			icon = 0x1F50C
+		case battery.Discharging:
+			icon = 0x1F50B
+		default:
+			icon = 0x2047
+		}
+		fmt.Printf("%c %d%%", icon, int((bat.Current/bat.Full*100)+0.5))
+		return
+	}
 	fmt.Printf(
 		"BAT%d: %s, %.2f%%",
 		idx,
