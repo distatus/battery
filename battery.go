@@ -36,6 +36,7 @@ package battery
 
 import (
 	"fmt"
+	"math"
 	"strings"
 )
 
@@ -153,4 +154,33 @@ func getAll(sg func() ([]*Battery, error)) ([]*Battery, error) {
 // If error is of type Errors, it is guaranteed that length of both returned slices is the same and that i-th error coresponds with i-th battery structure.
 func GetAll() ([]*Battery, error) {
 	return getAll(systemGetAll)
+}
+
+func summarize(sg func() ([]*Battery, error)) (*Battery, error) {
+	bs, err := sg()
+	if err != nil {
+		return nil, err
+	}
+	if len(bs) == 1 {
+		return bs[0], nil
+	}
+	res := new(Battery)
+	for _, battery := range bs {
+		res.Current += battery.Current
+		res.Full += battery.Full
+		res.ChargeRate += battery.ChargeRate
+		res.Design += battery.Design
+		res.Voltage = math.Max(res.Voltage, battery.Voltage)
+		res.DesignVoltage = math.Max(res.DesignVoltage, battery.DesignVoltage)
+		res.State = State(math.Max(float64(res.State), float64(battery.State)))
+	}
+	return res, nil
+}
+
+// Summarize returns aggregated information about all batteries in the system.
+//
+// If error != nil, it will be either ErrFatal or Errors.
+// If error is of type Errors, it is guaranteed that length of both returned slices is the same and that i-th error coresponds with i-th battery structure.
+func Summarize() (*Battery, error) {
+	return summarize(systemGetAll)
 }

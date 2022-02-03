@@ -206,3 +206,44 @@ func ExampleGet_errors() {
 		fmt.Println("Got current battery capacity")
 	}
 }
+
+func TestSummarize(t *testing.T) {
+	cases := []struct {
+		batteriesIn []*Battery
+		batterieOut *Battery
+	}{{
+		[]*Battery{{Full: 1}, {Full: 3}},
+		&Battery{Full: 4},
+	}, {
+		[]*Battery{{Current: 3}, {Current: 2}},
+		&Battery{Current: 5},
+	}, {
+		[]*Battery{{Design: 3}, {Design: 1}},
+		&Battery{Design: 4},
+	}, {
+		[]*Battery{{ChargeRate: 3}, {ChargeRate: 1}},
+		&Battery{ChargeRate: 4},
+	}, {
+		[]*Battery{{Voltage: 220}, {Voltage: 110}},
+		&Battery{Voltage: 220},
+	}, {
+		[]*Battery{{DesignVoltage: 220}, {DesignVoltage: 110}},
+		&Battery{DesignVoltage: 220},
+	}, {
+		[]*Battery{{State: Empty}, {State: Charging}},
+		&Battery{State: Charging},
+	},
+	}
+
+	for i, c := range cases {
+		f := func() ([]*Battery, error) {
+			return c.batteriesIn, nil
+		}
+		batterie, _ := summarize(f)
+
+		if !reflect.DeepEqual(batterie, c.batterieOut) {
+			t.Errorf("%d: %v != %v", i, batterie, c.batterieOut)
+		}
+
+	}
+}
