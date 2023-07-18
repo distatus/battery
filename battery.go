@@ -114,6 +114,8 @@ type Battery struct {
 	// but getting `Voltage` succeeds, this field will have
 	// the same value as `Voltage`, for convenience.
 	DesignVoltage float64
+	// CycleCount charge times.
+	CycleCount int
 }
 
 func (b *Battery) String() string {

@@ -34,6 +34,7 @@ type battery struct {
 	CurrentCapacity   int `plist:"AppleRawCurrentCapacity"`
 	MaxCapacity       int `plist:"AppleRawMaxCapacity"`
 	DesignCapacity    int
+	CycleCount        int
 	Amperage          int64
 	FullyCharged      bool
 	IsCharging        bool
@@ -67,6 +68,7 @@ func convertBattery(battery *battery) *Battery {
 		ChargeRate:    math.Abs(float64(battery.Amperage)) * volts,
 		Voltage:       volts,
 		DesignVoltage: volts,
+		CycleCount:    battery.CycleCount,
 	}
 	switch {
 	case !battery.ExternalConnected:
