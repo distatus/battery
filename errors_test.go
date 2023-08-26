@@ -76,3 +76,27 @@ func TestErrors(t *testing.T) {
 		}
 	}
 }
+
+func BenchmarkErrors_Error(b *testing.B) {
+	e := getErrors()
+	for i := 0; i < b.N; i++ {
+		_ = e.Error()
+	}
+}
+
+func BenchmarkErrors_ErrorBuilder(b *testing.B) {
+	e := getErrors()
+	for i := 0; i < b.N; i++ {
+		_ = e.ErrorBuilder()
+	}
+}
+
+func getErrors() Errors {
+	return Errors([]error{
+		errors.New("1"),
+		errors.New("2"),
+		errors.New("3"),
+		errors.New("4"),
+		errors.New("5"),
+	})
+}
