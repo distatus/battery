@@ -79,6 +79,7 @@ func TestErrors(t *testing.T) {
 
 func BenchmarkErrors_Error(b *testing.B) {
 	e := getErrors()
+	b.ResetTimer()
 	for i := 0; i < b.N; i++ {
 		_ = e.Error()
 	}
@@ -86,6 +87,7 @@ func BenchmarkErrors_Error(b *testing.B) {
 
 func BenchmarkErrors_ErrorBuilder(b *testing.B) {
 	e := getErrors()
+	b.ResetTimer()
 	for i := 0; i < b.N; i++ {
 		_ = e.ErrorBuilder()
 	}
