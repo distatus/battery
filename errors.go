@@ -21,7 +21,10 @@
 
 package battery
 
-import "fmt"
+import (
+	"fmt"
+	"strings"
+)
 
 // ErrNotFound variable represents battery not found error.
 //
@@ -118,16 +121,18 @@ func (p ErrPartial) noNil() bool {
 type Errors []error
 
 func (e Errors) Error() string {
-	s := "["
-	for _, err := range e {
+	var s strings.Builder
+	s.WriteString("[")
+	for idx, err := range e {
 		if err != nil {
-			s += err.Error() + " "
+			if idx >= 1 {
+				s.WriteString(" ")
+			}
+			s.WriteString(err.Error())
 		}
 	}
-	if len(s) > 1 {
-		s = s[:len(s)-1]
-	}
-	return s + "]"
+	s.WriteString("]")
+	return s.String()
 }
 
 func wrapError(err error) error {
