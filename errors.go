@@ -121,29 +121,14 @@ func (p ErrPartial) noNil() bool {
 type Errors []error
 
 func (e Errors) Error() string {
-	s := "["
-	for _, err := range e {
-		if err != nil {
-			s += err.Error() + " "
-		}
-	}
-	if len(s) > 1 {
-		s = s[:len(s)-1]
-	}
-	return s + "]"
-}
-
-func (e Errors) ErrorBuilder() string {
 	var s strings.Builder
 	s.WriteString("[")
 	for idx, err := range e {
 		if err != nil {
-			if idx == len(e)-1 {
-				s.Write([]byte(err.Error()))
-			} else {
-				s.WriteString(err.Error())
+			if idx >= 1 {
 				s.WriteString(" ")
 			}
+			s.WriteString(err.Error())
 		}
 	}
 	s.WriteString("]")

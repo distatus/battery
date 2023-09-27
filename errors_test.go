@@ -66,6 +66,7 @@ func TestErrors(t *testing.T) {
 		{Errors{ErrFatal{errors.New("t1")}}, "[Could not retrieve battery info: `t1`]"},
 		{Errors{ErrPartial{Full: errors.New("t2")}, ErrFatal{errors.New("t3")}}, "[{Full:t2} Could not retrieve battery info: `t3`]"},
 		{Errors{ErrPartial{Full: errors.New("t4")}, ErrPartial{Current: errors.New("t5")}}, "[{Full:t4} {Current:t5}]"},
+		{Errors{ErrFatal{errors.New("testing error")}, nil}, "[Could not retrieve battery info: `testing error`]"},
 	}
 
 	for i, c := range cases {
@@ -82,14 +83,6 @@ func BenchmarkErrors_Error(b *testing.B) {
 	b.ResetTimer()
 	for i := 0; i < b.N; i++ {
 		_ = e.Error()
-	}
-}
-
-func BenchmarkErrors_ErrorBuilder(b *testing.B) {
-	e := getErrors()
-	b.ResetTimer()
-	for i := 0; i < b.N; i++ {
-		_ = e.ErrorBuilder()
 	}
 }
 
